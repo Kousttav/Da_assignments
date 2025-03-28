@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+            margin: 20px;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            animation: fadeIn 1.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .question {
+            background: linear-gradient(to right, #ff758c, #ff7eb3);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .question:hover {
+            background-color: #ff4e78;
+            transform: scale(1.05);
+        }
+        .answer {
+            display: none;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: max-height 0.5s ease-out;
+        }
+        .img-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        img {
+            width: 50%;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        img:hover {
+            transform: scale(1.1);
+        }
+        pre {
+            background-color: #272822;
+            color: #f8f8f2;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 style="text-align:center; color:#333;">Data Analytics Assignment - Interactive Solution</h2>
+        
+        <div class="img-container">
+            <img src="table.png" alt="Student Dataframe Table" />
+        </div>
+
+        <div id="questions"></div>
+    </div>
+
+    <script>
+        const questionsAndAnswers = [
+            { q: "1) Identify the dimension, structure, and summary of the dataset using R script", a: `# Load dataset\ndata <- read.csv("data.csv")\ndim(data)\nstr(data)\nsummary(data)` },
+            { q: "2) Plot histogram and bar plot for the variables in a dataset using R script", a: `# Histogram\nhist(data$VariableName, main="Histogram of VariableName", col="blue")\n\n# Bar Plot\nbarplot(table(data$VariableName), main="Bar Plot of VariableName", col="red")` },
+            { q: "3) Scaling the continuous variables in a dataset using R script", a: `# Min-max scaling\ndata$VariableName <- (data$VariableName - min(data$VariableName, na.rm=TRUE)) /\n                      (max(data$VariableName, na.rm=TRUE) - min(data$VariableName, na.rm=TRUE))` },
+            { q: "4) Count of ‘NA’ values in each numeric variable within a dataset", a: `# Count of NA values\ncolSums(is.na(data))` },
+            { q: "5) Identify and treat outliers in a numeric variable", a: `# Boxplot to detect outliers\nboxplot(data$VariableName)$out\n\n# Treat outliers by capping\ndata$VariableName[data$VariableName > quantile(data$VariableName, 0.95)] <- quantile(data$VariableName, 0.95)` },
+            { q: "6) Create a pie plot and line plot of numeric variables using R Script", a: `# Pie plot\npie(table(data$VariableName), main="Pie Plot of VariableName")\n\n# Line plot\nplot(data$VariableName, type="l", main="Line Plot of VariableName", col="blue", xlab="Index", ylab="Value")` },
+            { q: "7) Calculate sum and mean of a numeric variable excluding ‘NA’ values", a: `# Sum excluding NA values\nsum(data$VariableName, na.rm=TRUE)\n\n# Mean excluding NA values\nmean(data$VariableName, na.rm=TRUE)` },
+            { q: "8) Difference between continuous and categorical variables", a: `# Continuous Variables: Numeric, measurable.\n# Categorical Variables: Discrete, grouped into categories.` },
+            { q: "9) Define outliers and plots to check for them", a: `# Outliers are extreme values that fall outside the expected range.\n# Plots: Boxplot, Histogram, Scatter Plot.` },
+            { q: "10) Retrieve rows 3, 4, 5 and all columns from the dataset", a: `# Extract rows 3, 4, 5 and all columns\ndata[3:5, ]` },
+            { q: "11) Extract rows 2 and 3 and columns 4 and 5 from the dataset", a: `# Extract rows 2 and 3, and columns 4 and 5\ndata[c(2, 3), c(4, 5)]` },
+            { q: "12) Define IQR and write its expression", a: `# IQR (Interquartile Range)\n# IQR = Q3 - Q1` },
+            { q: "13) Split the dataset into training and testing sets", a: `# Split dataset\nset.seed(123)\ntrainIndex <- sample(1:nrow(data), 0.7*nrow(data))\ntrain <- data[trainIndex, ]\ntest <- data[-trainIndex, ]` },
+            { q: "14) Count unique values in a categorical variable", a: `# Count unique values\ntable(data$CategoryVariable)` },
+            { q: "15) Merge two datasets by a common variable", a: `# Merge datasets\nmerged_data <- merge(data1, data2, by="ID")` },
+            { q: "16) Calculate median and standard deviation of a variable", a: `# Median\nmedian(data$VariableName, na.rm=TRUE)\n\n# Standard Deviation\nsd(data$VariableName, na.rm=TRUE)` },
+            { q: "17) Create a boxplot and identify quartiles and outliers", a: `# Boxplot\nboxplot(data$VariableName, main="Boxplot of VariableName")` },
+            { q: "18) Print the first 3 rows in a dataset", a: `# First 3 rows\nhead(data, 3)` },
+            { q: "19) Print the last 4 rows in a dataset", a: `# Last 4 rows\ntail(data, 4)` },
+            { q: "20) Define skewness and types with diagrams", a: `# Positive Skew: Tail on the right\n# Negative Skew: Tail on the left\n# Symmetric Distribution: Normal curve` },
+            { q: "21) Create a scatter plot between two numeric variables", a: `# Scatter plot\nplot(data$Var1, data$Var2, main="Scatter Plot", xlab="Var1", ylab="Var2", col="blue")` },
+            { q: "22) Calculate correlation between two variables", a: `# Correlation\ncor(data$Var1, data$Var2, use="complete.obs")` },
+            { q: "23) Check for duplicates in a dataset", a: `# Check for duplicates\nsum(duplicated(data))` },
+            { q: "24) Remove missing values from a dataset", a: `# Remove missing values\ndata <- na.omit(data)` },
+            { q: "25) Add a new column with transformed values", a: `# Add new column\ndata$new_col <- sqrt(data$VariableName)` },
+            { q: "26) Convert a character variable to a factor variable", a: `# Convert to factor\ndata$VariableName <- as.factor(data$VariableName)` },
+            { q: "27) Apply a custom function to a dataset", a: `# Apply custom function\ncustom_function <- function(x) { return(x*2) }\ndata$new_var <- sapply(data$VariableName, custom_function)` },
+            { q: "28) Define variance and its importance in statistics", a: `# Variance\n# Variance measures the spread of data points around the mean.` },
+            { q: "29) Identify missing values and replace with the mean", a: `# Replace NA with mean\ndata$VariableName[is.na(data$VariableName)] <- mean(data$VariableName, na.rm=TRUE)` },
+            { q: "30) Apply t-test to compare two samples", a: `# T-test\nt.test(data$Var1, data$Var2)` },
+            { q: "31) Define and create a heatmap in R", a: `# Heatmap\nheatmap(as.matrix(data[, c("Var1", "Var2")]), main="Heatmap of Variables")` },
+            { q: "32) Define confidence interval and calculate for mean", a: `# Confidence Interval\nmean_var <- mean(data$VariableName, na.rm=TRUE)\nci <- t.test(data$VariableName)$conf.int` },
+            { q: "33) Create a linear regression model and interpret", a: `# Linear Regression\nmodel <- lm(Var2 ~ Var1, data=data)\nsummary(model)` },
+            { q: "34) Explain principal component analysis (PCA)", a: `# PCA\npca <- prcomp(data[, c("Var1", "Var2")], scale=TRUE)\nsummary(pca)` },
+            { q: "35) Create a decision tree model in R", a: `# Decision Tree\nlibrary(rpart)\nmodel <- rpart(Class ~ Var1 + Var2, data=data, method="class")\nplot(model)\ntext(model)` }
+        ];
+        
+        let questionHtml = "";
+        
+        questionsAndAnswers.forEach((item, index) => {
+            questionHtml += `
+                <div class="question" onclick="toggleAnswer('q${index + 1}')">Question: ${item.q}</div>
+                <div class="answer" id="q${index + 1}">
+                    <pre>${item.a}</pre>
+                </div>
+            `;
+        });
+        
+        document.getElementById('questions').innerHTML = questionHtml;
+        
+        function toggleAnswer(id) {
+            var answer = document.getElementById(id);
+            if (answer.style.display === "none" || answer.style.display === "") {
+                answer.style.display = "block";
+            } else {
+                answer.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
